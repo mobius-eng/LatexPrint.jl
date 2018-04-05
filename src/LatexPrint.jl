@@ -20,9 +20,15 @@ global LEFT = "["    # default left delimiter for matrices
 global RIGHT = "]"   # default right delimiter
 global ALIGN = "c"   # default alignment character
 
+global FLOAT_PRECISION = 5
 # The set_xxx functions may take a string or a single character
 Ctype = Union{String,Char}
 
+
+# conv_float
+include("float_conv.jl")
+
+#
 """
 `set_nan(msg)` sets the `latex_print` output for a `NaN` value.
 """
@@ -82,6 +88,10 @@ function set_bool(t::Ctype, f::Ctype)
     return (TRUE,FALSE)
 end
 
+function set_float_precision(n::Int)
+    global FLOAT_PRECISION = n
+end
+
 # The latex_form function is the central workhorse for converting a
 # Julia object to a character string (of type String) that can be
 # printed (and then pasted into LaTeX mathmode). We create a version
@@ -106,7 +116,12 @@ function latex_form(x::AbstractFloat)
         end
         return "-" * INF
     end
-    return string(x)
+    return convert_float(x, FLOAT_PRECISION)
+    # if FLOAT_PRECISION > 0
+    #     return (@sprintf "%.${FLOAT_PRECISION}g" x)
+    # else
+    #     return string(x)
+    # end
 end
 
 # special case for MathConst's
