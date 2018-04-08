@@ -116,12 +116,11 @@ function latex_form(x::AbstractFloat)
         end
         return "-" * INF
     end
-    return convert_float(x, FLOAT_PRECISION)
-    # if FLOAT_PRECISION > 0
-    #     return (@sprintf "%.${FLOAT_PRECISION}g" x)
-    # else
-    #     return string(x)
-    # end
+    if FLOAT_PRECISION < 0
+        return string(x)
+    else
+        return convert_float(x, FLOAT_PRECISION)
+    end
 end
 
 # special case for MathConst's
